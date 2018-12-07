@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Merged log timeline</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        body {
+            line-height: 1;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        #logviewer {
+            width: 90%;
+            margin: 5px;
+        }
+
+        .treven {
+            background-color: #EEEEEE;
+        }
+
+        .trodd {
+            background-color: #DDDDDD;
+        }
+
+        .tdfile {
+            text-align: left;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom:2px;
+            padding-top:2px;
+        }
+
+        .tdlogline {
+            text-align: left;
+            padding-bottom:2px;
+            padding-top:2px;
+            padding-left: 10px;
+        }
+
+        .col1 {
+            background-color: #8CD1E6;
+        }
+
+        .col2 {
+            background-color: #C4ABFE;
+        }
+
+        .col3 {
+            background-color: #72FE95;
+        }
+
+        .col4 {
+            background-color: #FFAC62;
+        }
+
+        .col5 {
+            background-color: #FF7373;
+        }
+
+        .col6 {
+            background-color: #B9264F;
+        }
+
+        .col7 {
+            background-color: #86BCFF;
+        }
+
+        .col8 {
+            background-color: #2966B8;
+        }
+
+        .col9 {
+            background-color: #872187;
+        }
+
+        .col10 {
+            background-color: #DFE32D;
+        }
+
+        .rounded {
+            -moz-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+            border: solid 1px #666666;
+            padding-top: -1px;
+            padding-bottom: 1px;
+            padding-left: 5px;
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+            display: block;
+        }
+
+        .error {
+            background-color: maroon;
+            color: white;
+            font-weight: bold;
+        }
+
+        .warning {
+            background-color: darkred;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <script language="javascript">
+
+        function getQuerystring(key) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == key) {
+                    return pair[1];
+                }
+            }
+        }
+
+        function getLog() {
+            var logcsv = getQuerystring("file");
+            $.get(logcsv, function (data) {
+                var lines = data.split("\n");
+                $("#loglines").html("<table id='logviewer'></table>");
+                $("#logviewer").append("<tr class='treven'><th class='tdfile'>File</th><th class='tdlogline'>Log line</th></tr>");
+
+                var filecolors = new Array();
+                var filecolornum = 1;
+
+                $.each(lines, function (index, value) {
+                    var columns = value.split(",");
+                    if (columns.length != 2) return;
+
+                    var rowColor = "treven";
+                    if (index % 2 == 0) {
+                        rowColor = "treven";
+                    }
+                    else {
+                        rowColor = "trodd";
+                    }
+
+                    var spancolor = filecolornum;
+
+                    if (filecolors[columns[0]] == undefined) {
+                        filecolors[columns[0]] = filecolornum;
+                        filecolornum++;
+                    }
+                    else {
+                        spancolor = filecolors[columns[0]];
+                    }
+
+                    var logline = columns[1];
+                    logline = logline.replace( "WARNING" , "<span class='warning'>WARNING</span>" );
+                    logline = logline.replace( "ERROR" , "<span class='error'>ERROR</span>" );
+                    logline = logline.replace( "Fatal Error" , "<span class='error'>Fatal Error</span>" );
+                    logline = logline.replace( "PANIC" , "<span class='error'>PANIC</span>" );
+
+                    var row = "<tr class='" + rowColor + "'>";
+                    row += "<td class='tdfile'>";
+                    row += "<span class='col" + spancolor + " rounded'>" + columns[0] + "</span>";
+                    row += "</td>";
+                    row += "<td class='tdlogline'>" + logline + "</td>";
+                    row += "</tr>"
+
+                    $("#logviewer").append(row);
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            getLog();
+        });
+
+    </script>
+
+    <div id='loglines'></div>
+</body>
+
+</html>
