@@ -6,30 +6,16 @@
     <title>Merged log timeline</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
-        .left {
-            width: 140px;
-            float: left;
-            text-align: right;
-            position:fixed;
-            top:0;
-        }
-
-        .right {
-            margin-left: 150px;
-        }
-
-        .clear {
-            clear: both;
-        }
-
+        
         @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
         body {
             font-family: 'Open Sans', sans-serif;
             font-weight: 300;
             line-height: 1.42em;
-            color: #A7A1AE;
+            color: #DDDDDD;
             background-color: #1F2739;
+            overflow-x:hidden;
         }
 
         h1 {
@@ -65,6 +51,26 @@
             color: #FFF842;
         }
 
+        .strike {
+            text-decoration: line-through
+        }
+
+        .left {
+            width: 140px;
+            float: left;
+            text-align: right;
+            position:fixed;
+            top:0;
+        }
+
+        .right {
+            margin-left: 150px;
+        }
+
+        .clear {
+            clear: both;
+        }
+
         .container th h1 {
             font-weight: bold;
             font-size: 1em;
@@ -74,7 +80,6 @@
 
         .container td {
             font-weight: normal;
-            font-size: 1em;
             -webkit-box-shadow: 0 2px 2px -2px #0E1119;
             -moz-box-shadow: 0 2px 2px -2px #0E1119;
             box-shadow: 0 2px 2px -2px #0E1119;
@@ -135,7 +140,7 @@
         }
 
         #logviewer {
-            width: 90%;
+            width: 100%;
             margin: 5px;
         }
 
@@ -153,13 +158,26 @@
             padding-right: 10px;
             padding-bottom: 2px;
             padding-top: 2px;
+            width:120px;
+            font-size: 11pt;
+        }
+        
+        .tdtime {
+            text-align: right;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 2px;
+            padding-top: 2px;
+            width:140px;
+            font-size: 11pt;
         }
 
         .tdlogline {
             text-align: left;
             padding-bottom: 2px;
             padding-top: 2px;
-            padding-left: 10px;
+            padding-left: 20px;
+            font-size: 11pt;
         }
 
         .col1 {
@@ -213,13 +231,23 @@
         }
 
         .col11 {
-            background-color: #BBBBBB;
+            background-color: #5D8462;
             color: #000000;
         }
 
         .col12 {
             background-color: #666666;
             color: #000000;
+        }
+
+        .col13 {
+            background-color: #D24340;
+            color: #FFFFFF;
+        }
+
+        .col14 {
+            background-color: #462C2A;
+            color: #FFFFFF;
         }
 
         .col1:hover,
@@ -233,7 +261,9 @@
         .col9:hover,
         .col10:hover,
         .col11:hover,
-        .col12:hover {
+        .col12:hover,
+        .col13:hover,
+        .col14:hover {
             font-weight: bold;
             cursor: pointer;
             border: 3px;
@@ -247,7 +277,7 @@
             padding-bottom: 1px;
             padding-left: 5px;
             padding-right: 5px;
-            font-size: 10pt;
+            font-size: 11pt;
             font-family: Arial, Helvetica, sans-serif;
         }
 
@@ -287,14 +317,14 @@
             $.get(logcsv, function (data) {
                 var lines = data.split("\n");
                 $("#loglines").html("<table id='logviewer' class='container'></table>");
-                $("#logviewer").append("<tr class='treven'><th class='tdfile'>File</th><th class='tdlogline'>Log line</th></tr>");
+                $("#logviewer").append("<tr class='treven'><th class='tdfile'>File</th><th class='tdtime'>Time</th><th class='tdlogline'>Log line</th></tr>");
 
                 var filecolors = new Array();
                 var filecolornum = 1;
 
                 $.each(lines, function (index, value) {
                     var columns = value.split(",");
-                    if (columns.length != 2) return;
+                    if (columns.length != 3) return;
 
                     var rowColor = "treven";
                     if (index % 2 == 0) {
@@ -319,11 +349,15 @@
                                 $(".row" + spancolor).fadeOut("fast", function () {
                                     $("#loading").html("");
                                 });
+
+                                 $("#col" + spancolor).addClass( "strike" );
                             }
                             else {
                                 $(".row" + spancolor).fadeIn("fast", function () {
                                     $("#loading").html("");
                                 });
+
+                                $("#col" + spancolor).removeClass( "strike" );
                             }
                             visibility[filecolornum] = !visibility[filecolornum];
                         });
@@ -332,7 +366,7 @@
                         spancolor = filecolors[columns[0]];
                     }
 
-                    var logline = columns[1];
+                    var logline = columns[2];
                     logline = logline.replace("WARNING", "<span class='warning'>WARNING</span>");
                     logline = logline.replace("ERROR", "<span class='error'>ERROR</span>");
                     logline = logline.replace("Fatal Error", "<span class='error'>Fatal Error</span>");
@@ -342,6 +376,7 @@
                     row += "<td class='tdfile'>";
                     row += "<span class='col" + spancolor + " rounded'>" + columns[0] + "</span>";
                     row += "</td>";
+                    row += "<td class='tdtime'>" + columns[1] + "</td>";
                     row += "<td class='tdlogline'>" + logline + "</td>";
                     row += "</tr>"
 
@@ -376,10 +411,11 @@
     <div id="wrap">
         <div class="left">
             <br>
-            <h1>Filter</h1>
-            <span id='loading'></span><br /><br />
+            <h1>Filter</h1>            
             <input type='text' id='filtertext' placeholder='filter by' style='width:120px' /><br /><br />
+            <h1>Hide</h1>
             <div id='filterbuttons'></div>
+            <span id='loading'></span>            
         </div>
         <div class="right" id='loglines'>
         </div>

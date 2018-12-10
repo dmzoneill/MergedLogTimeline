@@ -260,14 +260,24 @@ function printmergedSortedTimeLine()
 
     foreach ($sortedTimeline as $line) {
         printf("%-20s %s\n", $line[0], trim($line[1]));
-        fwrite($fp, $line[0] . "," . trim($line[1]) . "\n");
+
+        $match = array();
+
+        if (preg_match("/([a-zA-Z]{3}\s+[0-9]{1,2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2})(.*)/", $line[1], $match) == 1) {
+        }
+        else if (preg_match("/([0-9]{2}\/[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2}[\.]?[0-9]{3}?)(.*)/", $line[1], $match) == 1) {
+        }
+        else if (preg_match("/([0-9]{2}\/[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2})(.*)/", $line[1], $match) == 1) {
+        }
+
+        fwrite($fp, $line[0] . "," . trim($match[1] . "," . $match[2]) . "\n");
     }
     fclose($fp);
 }
 
 function launchApache()
 {
-    global $outfile, $portRange;
+    global $outfile, $portRange, $opts;
 
     @unlink("a.pid");
     @unlink("error.log");
@@ -298,6 +308,8 @@ function launchApache()
 
 function webserver()
 {
+    global $opts;
+
     if ($opts['w'] !== false) {
         launchApache();
     }
