@@ -6,9 +6,127 @@
     <title>Merged log timeline</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
+        .left {
+            width: 140px;
+            float: left;
+            text-align: right;
+            position:fixed;
+            top:0;
+        }
+
+        .right {
+            margin-left: 150px;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
         body {
-            line-height: 1;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 300;
+            line-height: 1.42em;
+            color: #A7A1AE;
+            background-color: #1F2739;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 300;
+            line-height: 1em;
             text-align: center;
+            color: #4DC3FA;
+        }
+
+        h2 {
+            font-size: 1em;
+            font-weight: 300;
+            text-align: center;
+            display: block;
+            line-height: 1em;
+            padding-bottom: 2em;
+            color: #FB667A;
+        }
+
+        h2 a {
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #FB667A;
+            text-decoration: none;
+        }
+
+        .blue {
+            color: #185875;
+        }
+
+        .yellow {
+            color: #FFF842;
+        }
+
+        .container th h1 {
+            font-weight: bold;
+            font-size: 1em;
+            text-align: left;
+            color: #185875;
+        }
+
+        .container td {
+            font-weight: normal;
+            font-size: 1em;
+            -webkit-box-shadow: 0 2px 2px -2px #0E1119;
+            -moz-box-shadow: 0 2px 2px -2px #0E1119;
+            box-shadow: 0 2px 2px -2px #0E1119;
+        }
+
+        .container {
+            text-align: left;
+            overflow: hidden;
+            width: 100%;
+            margin: 0 auto;
+            display: table;
+            padding: 0 0 2em 0;
+        }
+
+        .container td,
+        .container th {
+            padding-bottom: 1px;
+            padding-top: 1px;
+            padding-left: 1px;
+        }
+
+        /* Background-color of the odd rows */
+        .container tr:nth-child(odd) {
+            background-color: #323C50;
+        }
+
+        /* Background-color of the even rows */
+        .container tr:nth-child(even) {
+            background-color: #2C3446;
+        }
+
+        .container th {
+            background-color: #1F2739;
+        }
+
+        .container td:first-child {
+            color: #FB667A;
+        }
+
+        .container tr:hover {
+            background-color: #464A52;
+            -webkit-box-shadow: 0 6px 6px -6px #0E1119;
+            -moz-box-shadow: 0 6px 6px -6px #0E1119;
+            box-shadow: 0 6px 6px -6px #0E1119;
+        }
+
+        @media (max-width: 800px) {
+
+            .container td:nth-child(4),
+            .container th:nth-child(4) {
+                display: none;
+            }
         }
 
         table {
@@ -30,89 +148,125 @@
         }
 
         .tdfile {
-            text-align: left;
+            text-align: right;
             padding-left: 10px;
             padding-right: 10px;
-            padding-bottom:2px;
-            padding-top:2px;
+            padding-bottom: 2px;
+            padding-top: 2px;
         }
 
         .tdlogline {
             text-align: left;
-            padding-bottom:2px;
-            padding-top:2px;
+            padding-bottom: 2px;
+            padding-top: 2px;
             padding-left: 10px;
         }
 
         .col1 {
             background-color: #8CD1E6;
+            color: #000000;
         }
 
         .col2 {
             background-color: #C4ABFE;
+            color: #000000;
         }
 
         .col3 {
             background-color: #72FE95;
+            color: #000000;
         }
 
         .col4 {
             background-color: #FFAC62;
+            color: #000000;
         }
 
         .col5 {
             background-color: #FF7373;
+            color: #000000;
         }
 
         .col6 {
             background-color: #B9264F;
+            color: #EEEEEE;
         }
 
         .col7 {
             background-color: #86BCFF;
+            color: #000000;
         }
 
         .col8 {
             background-color: #2966B8;
+            color: #EEEEEE;
         }
 
         .col9 {
             background-color: #872187;
+            color: #EEEEEE;
         }
 
         .col10 {
             background-color: #DFE32D;
+            color: #000000;
+        }
+
+        .col11 {
+            background-color: #BBBBBB;
+            color: #000000;
+        }
+
+        .col12 {
+            background-color: #666666;
+            color: #000000;
+        }
+
+        .col1:hover,
+        .col2:hover,
+        .col3:hover,
+        .col4:hover,
+        .col5:hover,
+        .col6:hover,
+        .col7:hover,
+        .col8:hover,
+        .col9:hover,
+        .col10:hover,
+        .col11:hover,
+        .col12:hover {
+            font-weight: bold;
+            cursor: pointer;
+            border: 3px;
         }
 
         .rounded {
-            -moz-border-radius: 5px 5px 5px 5px;
-            border-radius: 5px 5px 5px 5px;
-            border: solid 1px #666666;
+            -moz-border-radius: 1px 1px 1px 1px;
+            border-radius: 1px 1px 1px 1px;
+            border: solid 1px #000000;
             padding-top: -1px;
             padding-bottom: 1px;
             padding-left: 5px;
-            width: 100%;
-            margin-right: 0;
-            margin-left: 0;
-            display: block;
+            padding-right: 5px;
+            font-size: 10pt;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         .error {
             background-color: maroon;
             color: white;
-            font-weight: bold;
         }
 
         .warning {
             background-color: darkred;
             color: white;
-            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
     <script language="javascript">
+
+        var visibility = [];
 
         function getQuerystring(key) {
             var query = window.location.search.substring(1);
@@ -125,11 +279,14 @@
             }
         }
 
-        function getLog() {
+        function getLog(filter) {
             var logcsv = getQuerystring("file");
+
+            $("#filterbuttons").html("");
+
             $.get(logcsv, function (data) {
                 var lines = data.split("\n");
-                $("#loglines").html("<table id='logviewer'></table>");
+                $("#loglines").html("<table id='logviewer' class='container'></table>");
                 $("#logviewer").append("<tr class='treven'><th class='tdfile'>File</th><th class='tdlogline'>Log line</th></tr>");
 
                 var filecolors = new Array();
@@ -152,36 +309,82 @@
                     if (filecolors[columns[0]] == undefined) {
                         filecolors[columns[0]] = filecolornum;
                         filecolornum++;
+                        visibility[filecolornum] = true;
+
+                        $("#filterbuttons").append("<span id='col" + spancolor + "' class='col" + spancolor + " rounded'>" + columns[0] + "</span><br/>");
+
+                        $("#col" + spancolor).click(function () {
+                            $("#loading").html("<img src='ajax-loader.gif'>");
+                            if (visibility[filecolornum] == true) {
+                                $(".row" + spancolor).fadeOut("fast", function () {
+                                    $("#loading").html("");
+                                });
+                            }
+                            else {
+                                $(".row" + spancolor).fadeIn("fast", function () {
+                                    $("#loading").html("");
+                                });
+                            }
+                            visibility[filecolornum] = !visibility[filecolornum];
+                        });
                     }
                     else {
                         spancolor = filecolors[columns[0]];
                     }
 
                     var logline = columns[1];
-                    logline = logline.replace( "WARNING" , "<span class='warning'>WARNING</span>" );
-                    logline = logline.replace( "ERROR" , "<span class='error'>ERROR</span>" );
-                    logline = logline.replace( "Fatal Error" , "<span class='error'>Fatal Error</span>" );
-                    logline = logline.replace( "PANIC" , "<span class='error'>PANIC</span>" );
+                    logline = logline.replace("WARNING", "<span class='warning'>WARNING</span>");
+                    logline = logline.replace("ERROR", "<span class='error'>ERROR</span>");
+                    logline = logline.replace("Fatal Error", "<span class='error'>Fatal Error</span>");
+                    logline = logline.replace("PANIC", "<span class='error'>PANIC</span>");
 
-                    var row = "<tr class='" + rowColor + "'>";
+                    var row = "<tr class='trow row" + spancolor + " " + rowColor + "'>";
                     row += "<td class='tdfile'>";
                     row += "<span class='col" + spancolor + " rounded'>" + columns[0] + "</span>";
                     row += "</td>";
                     row += "<td class='tdlogline'>" + logline + "</td>";
                     row += "</tr>"
 
-                    $("#logviewer").append(row);
+                    if (typeof filter !== "undefined") {
+                        if (logline.indexOf(filter) > -1 ||
+                            logline.toLowerCase().indexOf("warning") > -1 ||
+                            logline.toLowerCase().indexOf("error") > -1 ||
+                            logline.toLowerCase().indexOf("fatal") > -1) {
+                            $("#logviewer").append(row);
+                        }
+                    }
+                    else {
+                        $("#logviewer").append(row);
+                    }
                 });
             });
         }
 
         $(document).ready(function () {
             getLog();
+
+            $("#filtertext").keyup(function () {
+                var text = $("#filtertext").val();
+                if (text.length > 2 || text.length == 0) {
+                    getLog(text);
+                }
+            });
         });
 
     </script>
 
-    <div id='loglines'></div>
+    <div id="wrap">
+        <div class="left">
+            <br>
+            <h1>Filter</h1>
+            <span id='loading'></span><br /><br />
+            <input type='text' id='filtertext' placeholder='filter by' style='width:120px' /><br /><br />
+            <div id='filterbuttons'></div>
+        </div>
+        <div class="right" id='loglines'>
+        </div>
+        <div class="clear"></div>
+    </div>
 </body>
 
 </html>

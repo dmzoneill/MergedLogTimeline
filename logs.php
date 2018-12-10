@@ -24,18 +24,21 @@ function parseArgs()
         "o" => "7",
         "o" => "7",
         "t" => 5,
+        "w" => false,
     );
 
-    $opts = getopt('d:a:b:o:s:t:') + $defaults;
+    $opts = getopt('d:a:b:o:s:t:w') + $defaults;
 
     if (trim($opts['d']) === "" || is_dir($opts['d']) === false || stristr($opts['d'], "/auto/cores/") === false) {
-        $usage = "\n Usage: " . $argv[0] . " -d /auto/cores/c23213213/bundle/ -o 7 -b 25 -a 15 -s \"panic string\" -t 5\n\n";
-        $usage .= "  -d Directory to scan\n";
-        $usage .= "  -b loglines minutes before\n";
-        $usage .= "  -a loglines minutes after\n";
-        $usage .= "  -s a search string\n";
-        $usage .= "  -o ignore files older than X days\n";
-        $usage .= "  -t number of time lines to build based upon match list\n\n";
+        $usage = "\n Usage: " . $argv[0] . " -d /auto/cores/c23213213/bundle/ -o 7 -b 25 -a 15 -s \"panic string\" -t 5\n";
+        $usage = " Usage: " . $argv[0] . " -w 23213213213.csv\n\n";
+        $usage .= "  -d /path  Directory to scan\n";
+        $usage .= "  -b 20     loglines minutes before\n";
+        $usage .= "  -a 10     loglines minutes after\n";
+        $usage .= "  -s \"rpc\"  a search string\n";
+        $usage .= "  -o 7      ignore files older than X days\n";
+        $usage .= "  -t 5      number of time lines to build based upon match list\n";
+        $usage .= "  -w file   start web server g\n\n";
         die($usage);
     }
 
@@ -219,7 +222,7 @@ function generateMergedTimeLine()
 
         $tlines++;
 
-        if ($tlines > $opts['t']) {
+        if ($tlines >= $opts['t']) {
             print "  Stopping as only " . $opts['t'] . " match timeline requested\n\n";
             break;
         }
@@ -259,7 +262,7 @@ function printmergedSortedTimeLine()
         printf("%-20s %s\n", $line[0], trim($line[1]));
         fwrite($fp, $line[0] . "," . trim($line[1]) . "\n");
     }
-    fclose($fp);    
+    fclose($fp);
 }
 
 function launchApache()
@@ -268,6 +271,10 @@ function launchApache()
 
     @unlink("a.pid");
     @unlink("error.log");
+
+    if ($opts['w'] !== false) {
+        $outfile = $opts['w'];
+    }
 
     $port = rand($portRange[0], $portRange[1]);
 
@@ -289,7 +296,15 @@ function launchApache()
     shell_exec("/usr/sbin/apache2 -X -f " . getcwd() . "/apache.conf >/dev/null 2>&1");
 }
 
+function webserver()
+{
+    if ($opts['w'] !== false) {
+        launchApache();
+    }
+}
+
 parseArgs();
+webserver();
 bundleDetails();
 parseDirectory();
 findAllTargetStrings();
