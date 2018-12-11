@@ -20,7 +20,7 @@ function parseArgs()
         "d" => "",
         "a" => 10,
         "b" => 20,
-        "s" => "panic",
+        "s" => array("panic", "fatal", "not responding", "Connection refused", "error: Connection timed out"),
         "o" => "7",
         "o" => "7",
         "t" => 5,
@@ -46,6 +46,7 @@ function parseArgs()
     $searchString = $opts['s'];
     $minutesBefore = intval($opts['b']);
     $minutesAfter = intval($opts['a']);
+    $opts['d'] = rtrim($opts['d'], "/");
 }
 
 function bundleDetails()
@@ -54,7 +55,7 @@ function bundleDetails()
 
     $size = trim(shell_exec("du -sh " . $opts['d'] . " | awk '{print \$1}'"));
 
-    print shell_exec("head -n 18 " . $opts['d'] . "/ddr/var/support/autosupport");
+    print shell_exec("head -n 18 " . $opts['d'] . "/ddr/var/support/autosupport | sed 's/^/  /g'");
 
     print "\n  Bundle size: $size\n\n";
 }
@@ -92,11 +93,19 @@ function findTargetStrings($file, $i, $num_files)
     }
 
     $lines = file($file);
-    $lines = preg_grep("/^.*" . $searchString . ".*$/i", $lines);
+    $matches = array();
+
+    if (is_array($searchString)) {
+        foreach ($searchString as $str) {
+            $matches = array_merge(preg_grep("/^.*" . $str . ".*$/i", $lines), $matches);
+        }
+    } else {
+        $matches = preg_grep("/^.*" . $searchString . ".*$/i", $lines);
+    }
 
     print chr(13);
 
-    return $lines;
+    return $matches;
 }
 
 function findAllTargetStrings()
@@ -105,7 +114,15 @@ function findAllTargetStrings()
     $logdir = $opts['d'] . "/ddr/var/log/debug";
     $targetStrings = array();
 
-    print "  Looking for \"$searchString\" strings in $logdir\n";
+    print "  Looking for \"";
+
+    if (is_array($searchString)) {
+        print implode("\", \"", $searchString);
+    } else {
+        print $searchString;
+    }
+
+    print "\" strings in $logdir\n";
 
     $num_files = count($files);
     $i = 1;
@@ -147,7 +164,7 @@ function sortTargetStringsChronologically()
     $i = 1;
 
     foreach ($targetStrings as $targetStr) {
-        print " $i] " . trim($targetStr) . "\n";
+        print "  $i] " . trim($targetStr) . "\n";
         $i++;
     }
     print "\n";
@@ -256,18 +273,16 @@ function printmergedSortedTimeLine()
 
     $fp = fopen($outfile, "w+");
 
-    print "\nTimeline\n" . str_repeat("=", 120) . "\n";
+    print "\n\n  Timeline\n  " . str_repeat("=", 120) . "\n";
 
     foreach ($sortedTimeline as $line) {
-        printf("%-20s %s\n", $line[0], trim($line[1]));
+        printf("  %-20s %s\n", $line[0], trim($line[1]));
 
         $match = array();
 
         if (preg_match("/([a-zA-Z]{3}\s+[0-9]{1,2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2})(.*)/", $line[1], $match) == 1) {
-        }
-        else if (preg_match("/([0-9]{2}\/[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2}[\.]?[0-9]{3}?)(.*)/", $line[1], $match) == 1) {
-        }
-        else if (preg_match("/([0-9]{2}\/[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2})(.*)/", $line[1], $match) == 1) {
+        } else if (preg_match("/([0-9]{2}\/[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2}[\.]?[0-9]{3}?)(.*)/", $line[1], $match) == 1) {
+        } else if (preg_match("/([0-9]{2}\/[0-9]{2}\s+[0-9]{2}:[0-9]{2}:[0-9]{2})(.*)/", $line[1], $match) == 1) {
         }
 
         fwrite($fp, $line[0] . "," . trim($match[1] . "," . $match[2]) . "\n");
@@ -292,8 +307,8 @@ function launchApache()
         $port = rand($portRange[0], $portRange[1]);
     }
 
-    print "\nTimeline Web\n" . str_repeat("=", 120) . "\n";
-    print "You can access the web page on http://" . trim(shell_exec("hostname -f ")) . ":$port/temp.html?file=" . $outfile . "\n";
+    print "\n  Timeline Web\n  " . str_repeat("=", 120) . "\n";
+    print "  You can access the web page on http://" . trim(shell_exec("hostname -f ")) . ":$port/temp.html?file=" . $outfile . "\n";
 
     $cwdesc = str_replace('/', '\/', getcwd());
     shell_exec("sed 's/^Listen.*/Listen $port/g' -i " . getcwd() . "/apache.conf");
