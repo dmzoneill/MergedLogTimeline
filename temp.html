@@ -6,7 +6,7 @@
     <title>Merged log timeline</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
-        
+
         @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
         body {
@@ -260,11 +260,37 @@
         .error {
             background-color: maroon;
             color: white;
+            font-weight: bold;
         }
 
         .warning {
-            background-color: darkred;
+            background-color: darkorange;
+            color: black;
+            font-weight: bold;
+        }
+
+        .info {
+            background-color: #333333;
             color: white;
+            font-weight: bold;
+        }
+
+        .debug {
+            background-color: #3333AA;
+            color: white;
+            font-weight: bold;
+        }
+
+        .notice {
+            background-color: #335533;
+            color: white;
+            font-weight: bold;
+        }
+
+        .ipaddress {
+            text-decoration-line: underline;
+            color: #EEEEEE;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -273,6 +299,7 @@
     <script language="javascript">
 
         var visibility = [];
+        var toggleTypes = {};
 
         function getQuerystring(key) {
             var query = window.location.search.substring(1);
@@ -326,14 +353,14 @@
                                     $("#loading").html("");
                                 });
 
-                                 $("#col" + spancolor).addClass( "strike" );
+                                $("#col" + spancolor).addClass("strike");
                             }
                             else {
                                 $(".row" + spancolor).fadeIn("fast", function () {
                                     $("#loading").html("");
                                 });
 
-                                $("#col" + spancolor).removeClass( "strike" );
+                                $("#col" + spancolor).removeClass("strike");
                             }
                             visibility[filecolornum] = !visibility[filecolornum];
                         });
@@ -343,10 +370,21 @@
                     }
 
                     var logline = columns[2];
+
+                    for (var key in toggleTypes) {
+                        if (toggleTypes[key] == false && logline.indexOf(key) > -1) {
+                            return;
+                        }
+                    }
+
                     logline = logline.replace("WARNING", "<span class='warning'>WARNING</span>");
+                    logline = logline.replace("NOTICE", "<span class='notice'>NOTICE</span>");
+                    logline = logline.replace("DEBUG", "<span class='debug'>DEBUG</span>");
+                    logline = logline.replace("INFO", "<span class='info'>INFO</span>");
                     logline = logline.replace("ERROR", "<span class='error'>ERROR</span>");
                     logline = logline.replace("Fatal Error", "<span class='error'>Fatal Error</span>");
                     logline = logline.replace("PANIC", "<span class='error'>PANIC</span>");
+                    logline = logline.replace(/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/, '<span class=\'ipaddress\'>$&</span>')
 
                     var row = "<tr class='trow row" + spancolor + " " + rowColor + "'>";
                     row += "<td class='tdfile'>";
@@ -380,6 +418,24 @@
                     getLog(text);
                 }
             });
+
+            $(".filterTypebutton").click(function () {
+                var val = $(this).text();
+                if (typeof toggleTypes[val] === "undefined") {
+                    toggleTypes[val] = false;
+                    $(this).addClass("strike");
+                }
+                else {
+                    toggleTypes[val] = !toggleTypes[val];
+                    if (toggleTypes[val] == true) {
+                        $(this).removeClass("strike");
+                    }
+                    else {
+                        $(this).addClass("strike");
+                    }
+                }
+                getLog();
+            });
         });
 
     </script>
@@ -388,12 +444,20 @@
         <div class="left">
             <br>
             <br>
-            <img src='data:image/png;base64,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' style='display: block; margin-left: auto; margin-right: auto; width: 95%;'>
-            <h1>Filter</h1>            
+            <img src='data:image/png;base64,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'
+                style='display: block; margin-left: auto; margin-right: auto; width: 95%;'>
+            <h1>Filter</h1>
             <input type='text' id='filtertext' placeholder='filter by' style='width:120px' /><br /><br />
             <h1>Hide</h1>
-            <div id='filterbuttons'></div>
-            <span id='loading'></span>            
+            <div id='filterbuttons'></div><br /><br />
+            <div id='filtertypebuttons'>
+                <span class='col12 rounded info filterTypebutton'>INFO</span><br />
+                <span class='col12 rounded notice filterTypebutton'>NOTICE</span><br />
+                <span class='col12 rounded debug filterTypebutton'>DEBUG</span><br />
+                <span class='col12 rounded warning filterTypebutton'>WARNING</span><br />
+                <span class='col12 rounded error filterTypebutton'>ERROR</span><br />
+            </div>
+            <span id='loading'></span>
         </div>
         <div class="right" id='loglines'>
         </div>
