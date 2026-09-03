@@ -61,12 +61,12 @@ oneild5@XXXXXX:~/loganalyzer$ ./logs.php -d /auto/cores/c12869209/bundle_XXXXXX_
   ...
   sms                  11/30 03:46:55.784 (tid 0xa7893a0): starting job: 10987579 for operation: sms_system_get_date by sys-internal@webgui-6.0.2.20-587212
   sms                  11/30 03:46:56.469 (tid 0x7f3d85a8f2a0): created job: 10987581 for operation: sms_system_get_date from host ::ffff:192.168.35.95
-  cifs.log             Nov 30 03:46:57 MLWDDA01 lwio: ERROR: [8300/1543567617.185221485] [lwio] New connection failed in protocol for fd = 193, address = '::ffff:10.191.7.82' with status = 0xc00000e5
+  cifs.log             Nov 30 03:46:57 MLWDDA01 lwio: ERROR: [8300/1543567617.185221485] [lwio] New connection failed in protocol for fd = 193, address = '::ffff:10.191.7.82' with status = 0xc000.0.6
   sms                  11/30 03:46:58.713 (tid 0x7f3d85a8f210): created job: 10987582 for operation: sms_elicense_get_scheme from host ::ffff:10.168.3.254
 
   Timeline Web
   ========================================================================================================================
-  You can access the web page on http://XXXXXXXX:36499/temp.html?file=154460.0.5.csv
+  You can access the web page on http://XXXXXXXX:36499/temp.html?file=154460.0.6.csv
 
 ```
 
