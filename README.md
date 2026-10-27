@@ -1,8 +1,13 @@
 # MergedLogTimeline
 
+<p align="center">
+  <img src=".github/logo.png" alt="MergedLogTimeline logo" width="128" />
+</p>
+
 ## Usage
+
 ```
- Usage: ./logs.php 
+ Usage: ./logs.php
 
   -d /path  Directory to scan
   -b 20     loglines minutes before
@@ -71,4 +76,3 @@ oneild5@XXXXXX:~/loganalyzer$ ./logs.php -d /auto/cores/c12869209/bundle_XXXXXX_
 ```
 
 ![screenshot](https://raw.githubusercontent.com/dmzoneill/MergedLogTimeline/master/eg.png)
-
