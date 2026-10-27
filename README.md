@@ -6,7 +6,7 @@
 
 ## Usage
 
-```
+```text
  Usage: ./logs.php
 
   -d /path  Directory to scan
@@ -20,7 +20,7 @@
 
 ## Example
 
-```
+```text
 oneild5@XXXXXX:~/loganalyzer$ ./logs.php -d /auto/cores/c12869209/bundle_XXXXXX_2018-11-30_13-09-40/ -b 60 -a 10 -s "Async rpc taking too long" -t 5 -o 21
 
   ==========  GENERAL INFO  ==========
