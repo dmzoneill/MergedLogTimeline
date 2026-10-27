@@ -1,8 +1,13 @@
 # MergedLogTimeline
 
+<p align="center">
+  <img src=".github/logo.png" alt="MergedLogTimeline logo" width="128" />
+</p>
+
 ## Usage
-```
- Usage: ./logs.php 
+
+```text
+ Usage: ./logs.php
 
   -d /path  Directory to scan
   -b 20     loglines minutes before
@@ -15,7 +20,7 @@
 
 ## Example
 
-```
+```text
 oneild5@XXXXXX:~/loganalyzer$ ./logs.php -d /auto/cores/c12869209/bundle_XXXXXX_2018-11-30_13-09-40/ -b 60 -a 10 -s "Async rpc taking too long" -t 5 -o 21
 
   ==========  GENERAL INFO  ==========
@@ -71,4 +76,3 @@ oneild5@XXXXXX:~/loganalyzer$ ./logs.php -d /auto/cores/c12869209/bundle_XXXXXX_
 ```
 
 ![screenshot](https://raw.githubusercontent.com/dmzoneill/MergedLogTimeline/master/eg.png)
-
